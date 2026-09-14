@@ -1,0 +1,37 @@
+{
+  "name": "@tolonglabs/rakamlah",
+  "version": "0.1.0",
+  "description": "Portable, agent-friendly browser walkthrough recording with narration, subtitles, and music.",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "rakam": "./bin/rakam.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "engine/",
+    "templates/",
+    "media/manifest.json"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "prepare": "husky",
+    "rakam": "node ./bin/rakam.mjs",
+    "test": "pnpm run test:node && pnpm run test:python",
+    "test:node": "node --test tests/*.test.mjs",
+    "test:python": "python3 -m unittest discover -s tests/python -p 'test_*.py'",
+    "lint": "prettier --check . && node scripts/check-public.mjs",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "prettier": "^3.9.6"
+  }
+}

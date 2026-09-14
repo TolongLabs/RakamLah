@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# The bootstrap commit lands before executable checks exist.
+[[ -f scripts/check-public.mjs ]] || exit 0
+
+if command -v pnpm >/dev/null 2>&1; then
+  pnpm lint && pnpm test
+else
+  corepack pnpm lint && corepack pnpm test
+fi

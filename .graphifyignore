@@ -1,0 +1,15 @@
+.agents/
+.claude/
+.github/
+.husky/
+assets/
+docs/
+examples/basic/site/
+media/
+node_modules/
+graphify-out/
+.rakam/
+*.json
+*.md
+*.mp3
+*.png

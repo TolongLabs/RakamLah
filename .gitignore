@@ -1,0 +1,44 @@
+# Dependencies and environments
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Generated recordings, caches, and reports
+.rakam/
+dist/
+build/
+coverage/
+graphify-out/
+*.mp4
+*.webm
+*.wav
+*.srt
+*.ass
+*.log
+tmp/
+temp/
+
+# Agent scratch state
+.devin-fanout/
+.playwright-mcp/
+settings.local.json
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.swp
+*~
