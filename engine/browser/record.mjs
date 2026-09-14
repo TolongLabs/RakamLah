@@ -6,8 +6,7 @@ import { operationFailed } from '../../src/errors.mjs'
 import { createBeatRecorder } from './beats.mjs'
 import { linearScroll } from './motion.mjs'
 
-const defaultRunId = () =>
-  `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(36).slice(2, 8)}`
+const defaultRunId = () => `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(36).slice(2, 8)}`
 
 const defaultLoadScenario = async (path) => import(`${pathToFileURL(path).href}?capture=${Date.now()}`)
 
@@ -82,19 +81,30 @@ export const recordBrowser = async (
     primaryError = error
     throw error.exitCode ? error : operationFailed(`Capture failed: ${error.message}`, { runDir, runId })
   } finally {
+    let finalizationError
     if (context) {
       try {
         await context.close()
       } catch (error) {
-        if (!primaryError) throw error
+        if (!primaryError) finalizationError = error
+      }
+    }
+    if (typeof scenario.cleanup === 'function') {
+      try {
+        await scenario.cleanup({ browser, config, runDir, runId })
+      } catch (error) {
+        if (!primaryError && !finalizationError) finalizationError = error
       }
     }
     if (browser) {
       try {
         await browser.close()
       } catch (error) {
-        if (!primaryError) throw error
+        if (!primaryError && !finalizationError) finalizationError = error
       }
+    }
+    if (finalizationError) {
+      throw operationFailed(`Capture cleanup failed: ${finalizationError.message}`, { runDir, runId })
     }
   }
 }

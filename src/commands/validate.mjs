@@ -19,8 +19,9 @@ export const validate = async (config) => {
   ) {
     throw invalidInput('Scenario expectedBeats must be a non-empty array of unique strings')
   }
-  for (const hook of ['warmup', 'audit']) {
-    if (hook in scenario && typeof scenario[hook] !== 'function') throw invalidInput(`Scenario ${hook} must be a function`)
+  for (const hook of ['warmup', 'audit', 'cleanup']) {
+    if (hook in scenario && typeof scenario[hook] !== 'function')
+      throw invalidInput(`Scenario ${hook} must be a function`)
   }
 
   return {
@@ -29,6 +30,6 @@ export const validate = async (config) => {
     message: 'Configuration and scenario are valid.',
     project: config.project,
     beats: [...scenario.expectedBeats],
-    hooks: ['warmup', 'walk', 'audit'].filter((hook) => typeof scenario[hook] === 'function')
+    hooks: ['warmup', 'walk', 'audit', 'cleanup'].filter((hook) => typeof scenario[hook] === 'function')
   }
 }

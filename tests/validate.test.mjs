@@ -34,18 +34,44 @@ test('validate accepts a scenario with walk, expected beats, and optional lifecy
 
 test('validate rejects a missing walk export', async () => {
   const path = await scenario(`export const expectedBeats = ['start']`)
-  await assert.rejects(validate({ project: 'fixture', scenario: path }), (error) => error.exitCode === 2 && /walk/.test(error.message))
+  await assert.rejects(
+    validate({ project: 'fixture', scenario: path }),
+    (error) => error.exitCode === 2 && /walk/.test(error.message)
+  )
 })
 
 test('validate rejects duplicate or absent expected beats', async () => {
-  const duplicate = await scenario(`export const expectedBeats = ['start', 'start']; export const walk = async () => {}`)
-  await assert.rejects(validate({ project: 'fixture', scenario: duplicate }), (error) => error.exitCode === 2 && /expectedBeats/.test(error.message))
+  const duplicate = await scenario(
+    `export const expectedBeats = ['start', 'start']; export const walk = async () => {}`
+  )
+  await assert.rejects(
+    validate({ project: 'fixture', scenario: duplicate }),
+    (error) => error.exitCode === 2 && /expectedBeats/.test(error.message)
+  )
 
   const absent = await scenario(`export const walk = async () => {}`)
-  await assert.rejects(validate({ project: 'fixture', scenario: absent }), (error) => error.exitCode === 2 && /expectedBeats/.test(error.message))
+  await assert.rejects(
+    validate({ project: 'fixture', scenario: absent }),
+    (error) => error.exitCode === 2 && /expectedBeats/.test(error.message)
+  )
 })
 
 test('validate rejects a non-function optional hook', async () => {
-  const path = await scenario(`export const expectedBeats = ['start']; export const walk = async () => {}; export const audit = true`)
-  await assert.rejects(validate({ project: 'fixture', scenario: path }), (error) => error.exitCode === 2 && /audit/.test(error.message))
+  const path = await scenario(
+    `export const expectedBeats = ['start']; export const walk = async () => {}; export const audit = true`
+  )
+  await assert.rejects(
+    validate({ project: 'fixture', scenario: path }),
+    (error) => error.exitCode === 2 && /audit/.test(error.message)
+  )
+})
+
+test('validate recognizes scenario cleanup as an optional lifecycle hook', async () => {
+  const path = await scenario(`
+    export const expectedBeats = ['start']
+    export const walk = async () => {}
+    export const cleanup = async () => {}
+  `)
+  const result = await validate({ project: 'fixture', scenario: path })
+  assert.deepEqual(result.hooks, ['walk', 'cleanup'])
 })

@@ -1,0 +1,6 @@
+# beat | offset in milliseconds | spoken line
+overview | 150 | Start with a focused workspace and one clear goal.
+brief | 150 | Add the campaign and audience exactly as a user would.
+generating | 150 | The brief is shaped while progress stays visible.
+result | 150 | A ready-to-use direction appears beside its strongest signal.
+proof | 150 | Copy the result, and the workflow closes on visible proof.

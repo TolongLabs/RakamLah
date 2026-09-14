@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signal Studio</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="shell navigation">
+      <a class="brand" href="#top" aria-label="Signal Studio home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Signal Studio</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#workspace">Workspace</a>
+        <a href="#proof">Library</a>
+        <span class="avatar" aria-label="Signed in as Jordan">JD</span>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="shell hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Direction workspace</p>
+          <h1 id="hero-title">Turn a loose signal into a <em>clear direction.</em></h1>
+          <p class="lede">A calm place to shape campaign ideas, align the audience, and leave with something useful.</p>
+        </div>
+        <div class="pulse-card" aria-label="Workspace activity">
+          <div class="pulse-top"><span>Live signal</span><strong>88</strong></div>
+          <div class="wave" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <div class="pulse-meta"><span>Clarity</span><span>Momentum</span><span>Fit</span></div>
+        </div>
+      </section>
+
+      <section class="shell workspace" id="workspace" aria-labelledby="workspace-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 / Shape</p>
+            <h2 id="workspace-title">Give the idea a useful edge.</h2>
+          </div>
+          <p>Three inputs. One focused direction.</p>
+        </div>
+
+        <div class="workspace-grid">
+          <form class="brief-card" id="brief-form">
+            <div class="field">
+              <label for="campaign">Campaign name</label>
+              <input id="campaign" name="campaign" placeholder="Name the moment" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="audience">Audience</label>
+              <textarea id="audience" name="audience" placeholder="Who needs to care?"></textarea>
+            </div>
+            <div class="field">
+              <label for="format">Primary format</label>
+              <select id="format" name="format">
+                <option value="editorial">Editorial story</option>
+                <option value="short-video">Short-form video</option>
+                <option value="live">Live experience</option>
+              </select>
+            </div>
+            <button id="generate" type="submit">
+              <span>Shape the brief</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" /></svg>
+            </button>
+          </form>
+
+          <aside class="process-card" aria-live="polite">
+            <p class="process-label">Direction engine</p>
+            <div class="orb" aria-hidden="true"><span></span></div>
+            <h3 id="process-title">Ready for a signal</h3>
+            <p id="process-copy">Your strongest angle will surface here, with the reasoning kept close.</p>
+            <div class="process-steps" aria-hidden="true"><i></i><i></i><i></i></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="result-section" id="proof" data-testid="proof" aria-labelledby="result-title">
+        <div class="shell">
+          <div class="section-heading light">
+            <div>
+              <p class="eyebrow">02 / Direction</p>
+              <h2 id="result-title">A direction worth carrying forward.</h2>
+            </div>
+            <span class="status-pill">Ready to use</span>
+          </div>
+
+          <article class="result-panel" id="result-panel">
+            <div class="result-main">
+              <p class="result-kicker">Core direction</p>
+              <h3>A city-sized idea, made personal.</h3>
+              <p>
+                Follow one maker through an ordinary day, then reveal how small independent choices reshape the whole
+                city.
+              </p>
+              <div class="tags"><span>Human scale</span><span>Optimistic</span><span>Short video</span></div>
+            </div>
+            <div class="result-proof">
+              <p>Strongest signal</p>
+              <strong>Individual stories make ambitious change feel possible.</strong>
+              <div class="confidence"><span>Confidence</span><b>92%</b></div>
+              <div class="confidence-bar"><i></i></div>
+            </div>
+          </article>
+
+          <div class="result-actions">
+            <p id="copy-status" aria-live="polite">Direction ready for your team.</p>
+            <button id="copy" type="button">Copy direction</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

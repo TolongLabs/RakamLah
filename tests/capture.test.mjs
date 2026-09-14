@@ -68,17 +68,10 @@ test('capture warms first, records the adapter, audits, and writes run-scoped be
     { beat: 'finish', atMs: 100 }
   ])
   assert.deepEqual(JSON.parse(await readFile(join(outputDir, 'run-001', 'beats.json'), 'utf8')), result.beats)
-  assert.deepEqual(fake.events.map((event) => (Array.isArray(event) ? event[0] : event)), [
-    'launch',
-    'warmup',
-    'context',
-    'page',
-    'walk',
-    'audit',
-    'context-close',
-    'move',
-    'browser-close'
-  ])
+  assert.deepEqual(
+    fake.events.map((event) => (Array.isArray(event) ? event[0] : event)),
+    ['launch', 'warmup', 'context', 'page', 'walk', 'audit', 'context-close', 'move', 'browser-close']
+  )
 })
 
 test('capture closes the recording context and browser after an adapter failure', async () => {
@@ -122,5 +115,48 @@ test('capture closes the browser when warmup fails before a recording context ex
     (error) => error.exitCode === 4 && /not ready/.test(error.message)
   )
   assert.ok(fake.events.includes('browser-close'))
-  assert.equal(fake.events.some((event) => Array.isArray(event) && event[0] === 'context'), false)
+  assert.equal(
+    fake.events.some((event) => Array.isArray(event) && event[0] === 'context'),
+    false
+  )
+})
+
+test('capture runs scenario cleanup after success and failure', async (context) => {
+  await context.test('success', async () => {
+    const outputDir = await mkdtemp(join(tmpdir(), 'rakamlah-capture-'))
+    const fake = harness()
+    const scenario = {
+      expectedBeats: ['start'],
+      walk: async ({ mark }) => mark('start'),
+      cleanup: async () => fake.events.push('cleanup')
+    }
+    await capture(baseConfig(outputDir), {
+      playwright: fake.playwright,
+      loadScenario: async () => scenario,
+      makeRunId: () => 'run-clean-success',
+      moveVideo: async () => {}
+    })
+    assert.equal(fake.events.filter((event) => event === 'cleanup').length, 1)
+  })
+
+  await context.test('failure', async () => {
+    const outputDir = await mkdtemp(join(tmpdir(), 'rakamlah-capture-'))
+    const fake = harness()
+    const scenario = {
+      expectedBeats: ['start'],
+      walk: async () => {
+        throw new Error('walk failed')
+      },
+      cleanup: async () => fake.events.push('cleanup')
+    }
+    await assert.rejects(
+      capture(baseConfig(outputDir), {
+        playwright: fake.playwright,
+        loadScenario: async () => scenario,
+        makeRunId: () => 'run-clean-failure',
+        moveVideo: async () => {}
+      })
+    )
+    assert.equal(fake.events.filter((event) => event === 'cleanup').length, 1)
+  })
 })
