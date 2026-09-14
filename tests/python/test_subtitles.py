@@ -59,6 +59,32 @@ class SubtitleTests(unittest.TestCase):
             blocks = [block.splitlines()[2:] for block in contents.strip().split('\n\n')]
             self.assertTrue(all(len(rows) <= 2 for rows in blocks))
 
+    def test_short_audio_never_extends_cards_past_audio_or_visual_end(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'seg').mkdir()
+            lines = [
+                {
+                    'ms': 500,
+                    'visual_end_ms': 1350,
+                    'text': (
+                        'Every compact subtitle card must stay attached to the measured narration '
+                        'even when many cards share a very short audio segment.'
+                    ),
+                }
+            ]
+            (root / 'lines.json').write_text(json.dumps(lines), encoding='utf-8')
+            silent_wav(root / 'seg' / '0.wav', 1000)
+
+            output = subtitles.build(root, max_chars=18, max_rows=2, min_card_ms=900)
+            contents = output.read_text(encoding='utf-8')
+            ranges = re.findall(r'(\d\d:\d\d:\d\d,\d{3}) --> (\d\d:\d\d:\d\d,\d{3})', contents)
+
+            self.assertGreater(len(ranges), 1)
+            self.assertLessEqual(max(milliseconds(end) for _, end in ranges), 1350)
+            for current, following in zip(ranges, ranges[1:]):
+                self.assertLessEqual(milliseconds(current[1]), milliseconds(following[0]))
+
 
 if __name__ == '__main__':
     unittest.main()

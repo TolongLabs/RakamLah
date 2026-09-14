@@ -1,12 +1,28 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "terms": "media/LICENSE.md",
+  "authorization": {
+    "record": "media/AUTHORIZATION.md",
+    "basis": "TolongLabs maintainer attestation for the exact checksums in this manifest",
+    "confirmedBy": "TolongLabs maintainer responsible for the supplied media collections",
+    "confirmedOn": "2026-09-14",
+    "redistributionAuthorized": true,
+    "commercialUseAuthorized": true,
+    "attributionRequired": false
+  },
   "files": [
     {
       "path": "media/bgm/lofi-bgm-track-list.txt",
       "kind": "cue-sheet",
       "bytes": 894,
-      "sha256": "6e411d4675445a4a8fd72bc8f872a5a77acabb01a3d1864df18dea487770a13e"
+      "sha256": "6e411d4675445a4a8fd72bc8f872a5a77acabb01a3d1864df18dea487770a13e",
+      "sourceCollection": "TolongLabs lo-fi BGM collection",
+      "rightsHolder": "Not asserted in-repository; covered by the recorded TolongLabs maintainer authorization",
+      "license": "TolongLabs Bundled Media Terms (media/LICENSE.md)",
+      "authorizationRecord": "media/AUTHORIZATION.md",
+      "redistributionAuthorized": true,
+      "commercialUseAuthorized": true,
+      "attributionRequired": false
     },
     {
       "path": "media/bgm/lofi-bgm.mp3",
@@ -16,7 +32,24 @@
       "durationSeconds": 10938.038277,
       "codec": "mp3",
       "sampleRate": 44100,
-      "channels": 2
+      "channels": 2,
+      "streams": [
+        { "index": 0, "codec": "mp3", "type": "audio" },
+        { "index": 1, "codec": "png", "type": "video", "attachedPicture": true }
+      ],
+      "embeddedMetadata": {
+        "title": "𝐏𝐥𝐚𝐲𝐥𝐢𝐬𝐭 90s Japanese Lofi Hiphop ☕️Nostalgic Chill Vibes",
+        "artist": "LoFi Tokyo",
+        "album": "𝐏𝐥𝐚𝐲𝐥𝐢𝐬𝐭 90s Japanese Lofi Hiphop ☕️Nostalgic Chill Vibes",
+        "date": "2025"
+      },
+      "sourceCollection": "TolongLabs lo-fi BGM collection",
+      "rightsHolder": "Not asserted in-repository; embedded artist metadata is preserved and the file is covered by the recorded TolongLabs maintainer authorization",
+      "license": "TolongLabs Bundled Media Terms (media/LICENSE.md)",
+      "authorizationRecord": "media/AUTHORIZATION.md",
+      "redistributionAuthorized": true,
+      "commercialUseAuthorized": true,
+      "attributionRequired": false
     },
     {
       "path": "media/voices/columbina-voice-sample.mp3",
@@ -26,7 +59,15 @@
       "durationSeconds": 1114.557823,
       "codec": "mp3",
       "sampleRate": 44100,
-      "channels": 2
+      "channels": 2,
+      "sourceCollection": "TolongLabs voice-reference collection",
+      "rightsHolder": "Not asserted in-repository; covered by the recorded TolongLabs maintainer authorization",
+      "license": "TolongLabs Bundled Media Terms (media/LICENSE.md)",
+      "authorizationRecord": "media/AUTHORIZATION.md",
+      "redistributionAuthorized": true,
+      "commercialUseAuthorized": true,
+      "attributionRequired": false,
+      "voiceSynthesisAuthorized": true
     },
     {
       "path": "media/voices/varesa-voice-sample.mp3",
@@ -36,7 +77,15 @@
       "durationSeconds": 1745.81551,
       "codec": "mp3",
       "sampleRate": 44100,
-      "channels": 2
+      "channels": 2,
+      "sourceCollection": "TolongLabs voice-reference collection",
+      "rightsHolder": "Not asserted in-repository; covered by the recorded TolongLabs maintainer authorization",
+      "license": "TolongLabs Bundled Media Terms (media/LICENSE.md)",
+      "authorizationRecord": "media/AUTHORIZATION.md",
+      "redistributionAuthorized": true,
+      "commercialUseAuthorized": true,
+      "attributionRequired": false,
+      "voiceSynthesisAuthorized": true
     }
   ]
 }

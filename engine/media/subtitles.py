@@ -79,6 +79,28 @@ def timestamp(milliseconds):
     return f'{hours:02d}:{minutes:02d}:{seconds:02d},{milliseconds:03d}'
 
 
+def _proportional(total, weights):
+    """Allocate an integer total using cumulative rounding without drift."""
+    weight_sum = sum(weights) or 1
+    boundaries = [0]
+    cumulative = 0
+    for weight in weights:
+        cumulative += weight
+        boundaries.append(round(total * cumulative / weight_sum))
+    return [boundaries[index + 1] - boundaries[index] for index in range(len(weights))]
+
+
+def _card_durations(total, weights, min_card_ms):
+    """Honor the preferred card floor only when the measured audio can fit it."""
+    if not weights or total <= 0:
+        return []
+    minimum_total = min_card_ms * len(weights)
+    if total < minimum_total:
+        return _proportional(total, weights)
+    extras = _proportional(total - minimum_total, weights)
+    return [min_card_ms + extra for extra in extras]
+
+
 def build(
     run_dir,
     max_chars=DEFAULT_MAX_CHARS,
@@ -93,12 +115,14 @@ def build(
         if not segment.exists():
             raise ValueError(f'no audio segment for narration line {index}')
         chunks = cards(line['text'], max_chars=max_chars, max_rows=max_rows)
-        total = wav_ms(segment)
+        start = int(line['ms'])
+        audio_end = start + wav_ms(segment)
+        visual_end = line.get('visual_end_ms')
+        end = min(audio_end, int(visual_end)) if visual_end is not None else audio_end
+        total = max(0, end - start)
         weights = [len(chunk.replace('\n', ' ')) for chunk in chunks]
-        weight_sum = sum(weights) or 1
-        cursor = int(line['ms'])
-        for chunk, weight in zip(chunks, weights):
-            duration = max(min_card_ms, int(total * weight / weight_sum))
+        cursor = start
+        for chunk, duration in zip(chunks, _card_durations(total, weights, min_card_ms)):
             spans.append([cursor, cursor + duration, chunk])
             cursor += duration
 
@@ -106,7 +130,7 @@ def build(
     for current, following in zip(spans, spans[1:]):
         if current[1] > following[0]:
             current[1] = following[0]
-    spans = [span for span in spans if span[1] - span[0] >= 200]
+    spans = [span for span in spans if span[1] > span[0]]
 
     cues = [
         f'{number}\n{timestamp(start)} --> {timestamp(end)}\n{text}\n'

@@ -66,7 +66,10 @@ export const recordBrowser = async (
 
     await scenario.walk({ browser, config, context, hold, linearScroll, mark, page, runDir, runId })
     const beats = recorder.audit()
-    if (typeof scenario.audit === 'function') await scenario.audit({ beats, config, page, runDir, runId })
+    if (typeof scenario.audit === 'function') {
+      const auditBeats = Object.freeze(beats.map((beat) => Object.freeze({ ...beat })))
+      await scenario.audit({ beats: auditBeats, config, page, runDir, runId })
+    }
     const video = page.video()
     await context.close()
     context = null

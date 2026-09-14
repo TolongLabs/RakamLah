@@ -13,8 +13,10 @@ node bin/rakam.mjs validate --config /absolute/path/to/rakam.config.mjs --json
 node bin/rakam.mjs run --config /absolute/path/to/rakam.config.mjs --json
 ```
 
-In `--json` mode, stdout contains exactly one JSON object followed by a newline. A success object includes `ok: true`,
-the command, a human-safe message, and command-specific fields. A failure has this v0.1 shape:
+In `--json` mode, stdout contains exactly one JSON object followed by a newline. The executable runs the command in an
+isolated worker, reserves a separate result descriptor, and redirects all ordinary worker stdout—including direct file
+descriptor writes and inherited child-process output—to stderr. A success object includes `ok: true`, the command, a
+human-safe message, and command-specific fields. A failure has this v0.1 shape:
 
 ```json
 {

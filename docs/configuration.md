@@ -51,28 +51,28 @@ export default {
 | `scenario`                    | required     | ESM scenario path                                       |
 | `narration`                   | required     | Beat-keyed UTF-8 text file                              |
 | `outputDir`                   | `.rakam/out` | Parent for unique run directories                       |
-| `browser.viewport`            | `1440×900`   | Positive Playwright viewport and raw recording size     |
-| `browser.channel`             | `null`       | Optional Playwright Chromium channel such as `chrome`   |
-| `browser.headless`            | `true`       | Launch mode                                             |
-| `video.width`, `video.height` | `1920×1080`  | Positive final canvas dimensions                        |
+| `browser.viewport`            | `1440×900`   | Positive integer Playwright viewport and recording size |
+| `browser.channel`             | `null`       | Null or a non-empty Playwright Chromium channel string  |
+| `browser.headless`            | `true`       | Boolean launch mode                                     |
+| `video.width`, `video.height` | `1920×1080`  | Positive integer final canvas dimensions                |
 | `video.minDuration`           | `60`         | Minimum accepted seconds                                |
 | `video.maxDuration`           | `120`        | Maximum accepted seconds; must not be below the minimum |
-| `video.preset`                | `slow`       | FFmpeg x264 preset passed as one argument               |
-| `subtitles.font`              | `Quicksand`  | Installed font name used by libass                      |
+| `video.preset`                | `slow`       | One of FFmpeg's standard x264 presets                   |
+| `subtitles.font`              | `Quicksand`  | Non-empty installed font name used by libass            |
 | `subtitles.fontSize`          | `18`         | Positive ASS font size                                  |
 | `subtitles.horizontalMargin`  | `80`         | Positive left/right safe margin                         |
 | `subtitles.verticalMargin`    | `28`         | Positive bottom safe margin                             |
 | `subtitles.maxRows`           | `2`          | One or two; no cue may exceed it                        |
 | `tts.engine`                  | `kokoro`     | `kokoro` or `chatterbox`                                |
-| `tts.voice`                   | `af_heart`   | Kokoro voice identifier                                 |
+| `tts.voice`                   | `af_heart`   | Non-empty Kokoro voice identifier                       |
 | `tts.speed`                   | `1`          | Positive synthesis speed                                |
 | `tts.reference`               | `null`       | Required local audio path when using Chatterbox         |
 | `bgm.path`                    | `null`       | Optional local audio path                               |
-| `bgm.gainDb`                  | `-17`        | Base music gain before side-chain ducking               |
+| `bgm.gainDb`                  | `-17`        | Finite numeric gain before side-chain ducking           |
 
-Configuration objects are frozen after loading. `validate` checks types, duration bounds, supported TTS engines, and
-adapter exports. Browser selectors and narration-to-beat alignment are evaluated only when their corresponding stages
-run.
+Configuration objects are deeply frozen after loading. `validate` checks every documented field type, integer
+dimensions, duration bounds, supported x264 presets and TTS engines, and adapter exports. Browser selectors and
+narration-to-beat alignment are evaluated only when their corresponding stages run.
 
 ## Scenario adapter
 

@@ -97,6 +97,41 @@ test('capture closes the recording context and browser after an adapter failure'
   assert.ok(fake.events.includes('browser-close'))
 })
 
+test('capture protects canonical beat metadata from a mutating audit hook', async () => {
+  const outputDir = await mkdtemp(join(tmpdir(), 'rakamlah-capture-'))
+  const fake = harness()
+  const scenario = {
+    expectedBeats: ['start', 'finish'],
+    walk: async ({ mark }) => {
+      mark('start')
+      mark('finish')
+    },
+    audit: async ({ beats }) => {
+      assert.throws(() => beats.reverse(), TypeError)
+      assert.throws(() => {
+        beats[0].beat = 'changed'
+      }, TypeError)
+    }
+  }
+
+  const result = await capture(baseConfig(outputDir), {
+    playwright: fake.playwright,
+    loadScenario: async () => scenario,
+    makeRunId: () => 'run-immutable',
+    clock: (() => {
+      const values = [100, 120, 160]
+      return () => values.shift()
+    })(),
+    moveVideo: async () => {}
+  })
+
+  assert.deepEqual(result.beats, [
+    { beat: 'start', atMs: 20 },
+    { beat: 'finish', atMs: 60 }
+  ])
+  assert.deepEqual(JSON.parse(await readFile(join(outputDir, 'run-immutable', 'beats.json'), 'utf8')), result.beats)
+})
+
 test('capture closes the browser when warmup fails before a recording context exists', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'rakamlah-capture-'))
   const fake = harness()

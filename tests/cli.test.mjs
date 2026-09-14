@@ -45,6 +45,38 @@ test('main returns zero and one JSON object for a successful validation', async 
   assert.equal(stdout.value().split('\n').filter(Boolean).length, 1)
 })
 
+test('JSON mode redirects config and adapter stdout noise to stderr', async () => {
+  const stdout = sink()
+  const stderr = sink()
+  const config = { project: 'fixture' }
+  const code = await main(
+    ['validate', '--json'],
+    { stdout: stdout.stream, stderr: stderr.stream },
+    {
+      loadConfig: async () => {
+        console.log('config-noise')
+        return config
+      },
+      handlers: {
+        validate: async () => {
+          process.stdout.write('adapter-noise\n')
+          return { ok: true, command: 'validate', message: 'valid' }
+        }
+      }
+    }
+  )
+
+  assert.equal(code, 0)
+  assert.deepEqual(JSON.parse(stdout.value()), {
+    ok: true,
+    command: 'validate',
+    message: 'valid'
+  })
+  assert.equal(stdout.value().split('\n').filter(Boolean).length, 1)
+  assert.match(stderr.value(), /config-noise/)
+  assert.match(stderr.value(), /adapter-noise/)
+})
+
 test('main maps invalid input to exit code 2 in JSON mode', async () => {
   const stdout = sink()
   const stderr = sink()

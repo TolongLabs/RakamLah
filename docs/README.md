@@ -13,8 +13,8 @@ deliverable verification through one portable headless interface.
 | **Release**      | `v0.1.0` public alpha                                                                     |
 | **Ships now**    | Headless CLI, scenario adapters, browser capture, local TTS, subtitles, BGM, verification |
 | **Output**       | H.264 video, AAC audio, run-scoped artifacts, and machine-readable results                |
-| **Requirements** | Node.js 20.11+, Python 3, Playwright, FFmpeg/FFprobe, and Git LFS                         |
-| **License**      | MIT for code; separate no-attribution terms for bundled media                             |
+| **Requirements** | Node.js 20.11+, Bash, Python 3, Playwright/Chromium, FFmpeg/FFprobe, and Git LFS          |
+| **License**      | MIT code, preserved third-party licenses, and separate terms for bundled media            |
 
 ---
 
@@ -85,7 +85,7 @@ Each run gets its own output directory:
 
 ### 1. Install the host tools
 
-Install Node.js 20.11 or newer, Python 3, FFmpeg with `libx264` and the `subtitles` filter, and Git LFS. Then:
+Install Node.js 20.11 or newer, Bash, Python 3, FFmpeg with `libx264` and the `subtitles` filter, and Git LFS. Then:
 
 ```bash
 git lfs install
@@ -96,7 +96,12 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm exec playwright install chromium
 ```
 
-### 2. Validate and capture the local example
+### 2. Configure a local voice engine
+
+Choose either Kokoro or Chatterbox using [`voices.md`](voices.md). Models and caches stay outside Git. `doctor` checks
+the selected engine, so install its Python packages and local model files before expecting a clean diagnostic.
+
+### 3. Diagnose, validate, and capture the local example
 
 ```bash
 node bin/rakam.mjs doctor --config examples/basic/rakam.config.mjs --json
@@ -106,12 +111,7 @@ node bin/rakam.mjs capture --config examples/basic/rakam.config.mjs --json
 
 The example serves its own synthetic site on an ephemeral loopback port, performs a realistic form-to-result flow, and
 shuts the server down after recording. It makes no remote request. If you prefer an installed Chrome channel, set
-`RAKAM_BROWSER_CHANNEL=chrome` before the command.
-
-### 3. Configure local speech, then render
-
-Choose either Kokoro or Chatterbox using [`voices.md`](voices.md). Models and caches stay outside Git. Once one engine
-is ready:
+`RAKAM_BROWSER_CHANNEL=chrome` before the command. Once the diagnostic passes:
 
 ```bash
 node bin/rakam.mjs run --config examples/basic/rakam.config.mjs --json
@@ -126,17 +126,18 @@ node bin/rakam.mjs run --config examples/basic/rakam.config.mjs --json
 
 Every command accepts `--config <path>` and `--json`.
 
-| Command    | Purpose                                                            | Success artifacts              |
-| ---------- | ------------------------------------------------------------------ | ------------------------------ |
-| `doctor`   | Check Node, Python, FFmpeg, FFprobe, Playwright, and input paths   | Dependency report              |
-| `validate` | Import config and validate the scenario's exported contract        | Beat and lifecycle-hook report |
-| `capture`  | Record the scripted browser flow and timestamp every visible beat  | `capture.webm`, `beats.json`   |
-| `narrate`  | Synthesize, schedule, subtitle, mix, and encode the newest capture | `demo.mp4` and media sidecars  |
-| `run`      | Execute capture → narrate → verify against one run directory       | Verified deliverable           |
-| `verify`   | Check duration, dimensions, H.264, AAC, audio, and required beats  | Verification report            |
+| Command    | Purpose                                                             | Success artifacts              |
+| ---------- | ------------------------------------------------------------------- | ------------------------------ |
+| `doctor`   | Check host tools, Chromium launch, FFmpeg features, TTS, and inputs | Dependency report              |
+| `validate` | Import config and validate the scenario's exported contract         | Beat and lifecycle-hook report |
+| `capture`  | Record the scripted browser flow and timestamp every visible beat   | `capture.webm`, `beats.json`   |
+| `narrate`  | Synthesize, schedule, subtitle, mix, and encode the newest capture  | `demo.mp4` and media sidecars  |
+| `run`      | Execute capture → narrate → verify against one run directory        | Verified deliverable           |
+| `verify`   | Check duration, dimensions, H.264, AAC, audio, and required beats   | Verification report            |
 
-With `--json`, stdout contains exactly one JSON object and the process never prompts. This is the stable integration
-surface for shell scripts, CI, and coding agents. Exit codes are intentionally small and documented in
+With `--json`, stdout contains exactly one JSON object and the process never prompts. A process-isolated worker routes
+config, adapter, and child-process diagnostics to stderr, including direct writes to file descriptor 1. This is the
+stable integration surface for shell scripts, CI, and coding agents. Exit codes are intentionally small and documented in
 [`agent-integration.md`](agent-integration.md).
 
 ---
@@ -198,8 +199,10 @@ node scripts/check-media.mjs
 git lfs ls-files
 ```
 
-Code is MIT licensed. TolongLabs has confirmed that the manifest-listed media can be used and redistributed without
-attribution or royalty; see the [bundled media terms](../media/LICENSE.md). Voice synthesis is also governed by the
+TolongLabs-authored code is MIT licensed; vendored agent tooling keeps its upstream terms in
+[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). The manifest-listed media can be used and redistributed without
+attribution or royalty under the [bundled media terms](../media/LICENSE.md), with the underlying maintainer attestation
+recorded in [`media/AUTHORIZATION.md`](../media/AUTHORIZATION.md). Voice synthesis is also governed by the
 [Responsible Use Policy](../RESPONSIBLE_USE.md).
 
 ---

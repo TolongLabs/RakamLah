@@ -32,6 +32,17 @@ const loaders = {
 
 const requestedCommand = (argv) => argv.find((token) => !token.startsWith('-')) ?? null
 
+const withJsonStdoutGuard = async (enabled, stderr, action) => {
+  if (!enabled) return action()
+  const originalWrite = process.stdout.write
+  process.stdout.write = (chunk, encoding, callback) => stderr.write(chunk, encoding, callback)
+  try {
+    return await action()
+  } finally {
+    process.stdout.write = originalWrite
+  }
+}
+
 export const main = async (argv, io = {}, dependencies = {}) => {
   const stdout = io.stdout ?? process.stdout
   const stderr = io.stderr ?? process.stderr
@@ -47,15 +58,17 @@ export const main = async (argv, io = {}, dependencies = {}) => {
       return 0
     }
 
-    const config = await (dependencies.loadConfig ?? loadConfig)(parsed.configPath)
-    const configuredHandlers = dependencies.handlers ?? {}
-    let handler = configuredHandlers[parsed.command]
-    if (!handler) {
-      if (parsed.command === 'doctor') handler = doctor
-      else if (parsed.command === 'validate') handler = validate
-      else handler = await loaders[parsed.command]()
-    }
-    const result = await handler(config, dependencies)
+    const result = await withJsonStdoutGuard(parsed.json, stderr, async () => {
+      const config = await (dependencies.loadConfig ?? loadConfig)(parsed.configPath)
+      const configuredHandlers = dependencies.handlers ?? {}
+      let handler = configuredHandlers[parsed.command]
+      if (!handler) {
+        if (parsed.command === 'doctor') handler = doctor
+        else if (parsed.command === 'validate') handler = validate
+        else handler = await loaders[parsed.command]()
+      }
+      return handler(config, dependencies)
+    })
     writeResult(result, { json: parsed.json, stdout, stderr })
     return 0
   } catch (error) {

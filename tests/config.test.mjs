@@ -78,3 +78,32 @@ test('rejects nonpositive dimensions and subtitle rows outside one or two', asyn
   }`)
   await assert.rejects(loadConfig(badRows.path), (error) => error.exitCode === 2 && /maxRows/.test(error.message))
 })
+
+test('rejects invalid path, browser, encoding, font, voice, and gain types', async () => {
+  const cases = [
+    ['outputDir: 42', /outputDir/],
+    ['outputDir: null', /outputDir/],
+    ["browser: { headless: 'yes' }", /browser\.headless/],
+    ['browser: { channel: 7 }', /browser\.channel/],
+    ['browser: { viewport: { width: 1440.5 } }', /browser\.viewport\.width/],
+    ['video: { height: 1080.5 }', /video\.height/],
+    ["video: { preset: 'anything' }", /video\.preset/],
+    ['subtitles: { font: [] }', /subtitles\.font/],
+    ['tts: { voice: false }', /tts\.voice/],
+    ["bgm: { gainDb: 'quiet' }", /bgm\.gainDb/]
+  ]
+
+  for (const [field, message] of cases) {
+    const { path } = await makeConfig(`export default {
+      project: 'fixture', scenario: './scenario.mjs', narration: './narration.txt', ${field}
+    }`)
+    await assert.rejects(loadConfig(path), (error) => error.exitCode === 2 && message.test(error.message), field)
+  }
+})
+
+test('rejects non-object configuration sections', async () => {
+  const { path } = await makeConfig(`export default {
+    project: 'fixture', scenario: './scenario.mjs', narration: './narration.txt', browser: []
+  }`)
+  await assert.rejects(loadConfig(path), (error) => error.exitCode === 2 && /browser/.test(error.message))
+})

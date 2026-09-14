@@ -1,7 +1,9 @@
 # Voice Engines
 
 RakamLah supports local Kokoro narration and Chatterbox voice-reference synthesis. Model weights, Python environments,
-and generated speech caches stay outside the repository.
+and generated speech caches stay outside the repository. `rakam doctor` checks the active engine's Python imports and,
+for Kokoro, both required model files. It honors `RAKAM_PYTHON`, `RAKAM_DATA_HOME`, `KOKORO_HOME`, and
+`CHATTERBOX_HOME`, matching the render environment.
 
 ## Kokoro
 
@@ -37,6 +39,7 @@ pins include CPU-safe Nano support:
 export CHATTERBOX_HOME="$HOME/.local/share/rakamlah/chatterbox"
 python3 -m venv "$CHATTERBOX_HOME/.venv"
 "$CHATTERBOX_HOME/.venv/bin/python" -m pip install -r engine/media/chatterbox-requirements.txt
+"$CHATTERBOX_HOME/.venv/bin/python" -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='ResembleAI/chatterbox-nano', allow_patterns=['*.safetensors', '*.json', '*.txt', '*.pt', '*.model'])"
 ```
 
 Then configure a manifest-listed or consent-cleared reference:
@@ -49,9 +52,12 @@ tts: {
 }
 ```
 
-The renderer defaults to the Nano variant. Set `CHATTERBOX_VARIANT=turbo` or `base` only when the installed runtime and
-hardware support it. RakamLah disables MKL-DNN and forces the mathematical attention backend on CPU because fused paths
-can produce non-finite audio on some processors.
+The renderer defaults to the Nano variant. The explicit snapshot step fills the normal Hugging Face cache; `doctor`
+checks it in local-only mode and never turns a readiness check into an implicit download. For Turbo, change the repo ID
+to `ResembleAI/chatterbox-turbo` and set `CHATTERBOX_VARIANT=turbo`. The Base variant uses
+`ResembleAI/chatterbox`; its five checkpoint files are checked individually. Use a non-default variant only when the
+installed runtime and hardware support it. RakamLah disables MKL-DNN and forces the mathematical attention backend on
+CPU because fused paths can produce non-finite audio on some processors.
 
 ## Cache identity
 

@@ -38,18 +38,57 @@ const assertSafePath = (root, value) => {
   return absolute
 }
 
+const assertAuthorization = (manifest) => {
+  const authorization = manifest.authorization
+  if (!authorization || typeof authorization !== 'object' || Array.isArray(authorization)) {
+    throw new Error('media manifest requires an authorization record')
+  }
+  if (
+    typeof authorization.record !== 'string' ||
+    typeof authorization.confirmedBy !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(authorization.confirmedOn) ||
+    authorization.redistributionAuthorized !== true ||
+    authorization.commercialUseAuthorized !== true ||
+    authorization.attributionRequired !== false
+  ) {
+    throw new Error('media authorization record is incomplete')
+  }
+  return authorization
+}
+
+const assertEntryRights = (entry) => {
+  for (const field of ['sourceCollection', 'rightsHolder', 'license', 'authorizationRecord']) {
+    if (typeof entry[field] !== 'string' || !entry[field].trim()) {
+      throw new Error(`${field} is required for ${entry.path}`)
+    }
+  }
+  if (
+    entry.redistributionAuthorized !== true ||
+    entry.commercialUseAuthorized !== true ||
+    entry.attributionRequired !== false
+  ) {
+    throw new Error(`rights scope is incomplete for ${entry.path}`)
+  }
+  if (entry.kind === 'voice-reference' && entry.voiceSynthesisAuthorized !== true) {
+    throw new Error(`voice synthesis authorization is required for ${entry.path}`)
+  }
+}
+
 export const verifyMediaManifest = async (repositoryRoot, manifestName = 'media/manifest.json') => {
   const root = resolve(repositoryRoot)
   const manifestPath = assertSafePath(root, manifestName)
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
-  if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.files) || !manifest.files.length) {
-    throw new Error('media manifest must use schemaVersion 1 and contain files')
+  if (manifest.schemaVersion !== 2 || !Array.isArray(manifest.files) || !manifest.files.length) {
+    throw new Error('media manifest must use schemaVersion 2 and contain files')
   }
+  const authorization = assertAuthorization(manifest)
+  await stat(assertSafePath(root, authorization.record))
 
   const seen = new Set()
   const verified = []
   for (const entry of manifest.files) {
     const absolute = assertSafePath(root, entry.path)
+    assertEntryRights(entry)
     if (seen.has(entry.path)) throw new Error(`duplicate media path: ${entry.path}`)
     seen.add(entry.path)
     if (!/^[a-f0-9]{64}$/.test(entry.sha256)) throw new Error(`invalid checksum: ${entry.path}`)
@@ -79,7 +118,7 @@ export const verifyMediaManifest = async (repositoryRoot, manifestName = 'media/
     )
   }
 
-  return { ok: true, files: verified }
+  return { ok: true, authorization, files: verified }
 }
 
 const invokedPath = process.argv[1] ? resolve(process.argv[1]) : ''

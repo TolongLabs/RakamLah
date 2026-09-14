@@ -24,8 +24,8 @@ corepack pnpm test
 corepack pnpm lint
 ```
 
-FFmpeg, FFprobe, Python 3, and Node.js 20.11 or newer must be available on `PATH`. Speech-model setup is optional for
-unit tests; see [`docs/voices.md`](docs/voices.md) before running a full narration render.
+Bash, FFmpeg, FFprobe, Python 3, and Node.js 20.11 or newer must be available on `PATH`. Speech-model setup is optional
+for unit tests but required for a passing `doctor`; see [`docs/voices.md`](docs/voices.md) before a full render.
 
 ## Development flow
 
@@ -55,9 +55,11 @@ Do not add audio until its use, voice-synthesis, and redistribution rights are e
 
 1. live under `media/bgm/` or `media/voices/`;
 2. be tracked by Git LFS;
-3. have its exact byte size, SHA-256, format, and duration recorded in `media/manifest.json`;
-4. pass `node scripts/check-media.mjs`; and
-5. comply with [`RESPONSIBLE_USE.md`](RESPONSIBLE_USE.md).
+3. have its exact byte size, SHA-256, format, duration, provenance, rights status, and authorization scope recorded in
+   `media/manifest.json`;
+4. update [`media/AUTHORIZATION.md`](media/AUTHORIZATION.md) with the evidence reviewed by a maintainer;
+5. pass `node scripts/check-media.mjs`; and
+6. comply with [`RESPONSIBLE_USE.md`](RESPONSIBLE_USE.md).
 
 Do not commit model weights, generated WAV files, captures, rendered videos, or cache directories.
 
