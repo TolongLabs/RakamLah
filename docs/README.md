@@ -98,8 +98,9 @@ corepack pnpm exec playwright install chromium
 
 ### 2. Configure a local voice engine
 
-Choose either Kokoro or Chatterbox using [`voices.md`](voices.md). Models and caches stay outside Git. `doctor` checks
-the selected engine, so install its Python packages and local model files before expecting a clean diagnostic.
+Choose either Kokoro or Chatterbox using [`voices.md`](voices.md). Models and caches stay outside Git. The reviewed
+Chatterbox dependency set currently requires Python 3.14; Kokoro and the core media scripts do not. `doctor` checks the
+selected engine, so install its Python packages and local model files before expecting a clean diagnostic.
 
 ### 3. Diagnose, validate, and capture the local example
 

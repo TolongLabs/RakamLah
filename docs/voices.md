@@ -33,11 +33,14 @@ Set `tts.voice` and `tts.speed` in config. Kokoro output is written as finite 16
 ## Chatterbox
 
 Chatterbox loads a reference voice and keeps one model resident for the whole narration batch. The reviewed dependency
-pins include CPU-safe Nano support:
+pins include CPU-safe Nano support and security-fixed PyTorch. This v0.1 dependency set requires Python 3.14 because
+upstream still pins PyTorch 2.6 on older interpreters:
 
 ```bash
 export CHATTERBOX_HOME="$HOME/.local/share/rakamlah/chatterbox"
-python3 -m venv "$CHATTERBOX_HOME/.venv"
+python3.14 -m venv "$CHATTERBOX_HOME/.venv"
+"$CHATTERBOX_HOME/.venv/bin/python" -m pip install \
+  torch==2.13.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cpu
 "$CHATTERBOX_HOME/.venv/bin/python" -m pip install -r engine/media/chatterbox-requirements.txt
 "$CHATTERBOX_HOME/.venv/bin/python" -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='ResembleAI/chatterbox-nano', allow_patterns=['*.safetensors', '*.json', '*.txt', '*.pt', '*.model'])"
 ```
