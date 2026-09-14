@@ -38,7 +38,10 @@ const parseEnv = (text) => {
     if (!line || line.startsWith('#')) continue
     const eq = line.indexOf('=')
     if (eq < 1) continue
-    const key = line.slice(0, eq).replace(/^export\s+/, '').trim()
+    const key = line
+      .slice(0, eq)
+      .replace(/^export\s+/, '')
+      .trim()
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) continue
     let value = line.slice(eq + 1).trim()
     const quote = value.length > 1 && (value[0] === '"' || value[0] === "'") ? value[0] : ''
@@ -102,7 +105,8 @@ const main = () => {
   const mainText = mainRoot === null ? null : read(resolve(mainRoot, '.env'))
   if (mainText !== null) {
     const found = vsMain(local, parseEnv(mainText))
-    if (found.length) sections.push(`This worktree disagrees with the main checkout at ${mainRoot}:\n${found.join('\n')}`)
+    if (found.length)
+      sections.push(`This worktree disagrees with the main checkout at ${mainRoot}:\n${found.join('\n')}`)
   }
 
   if (!sections.length) return

@@ -5,7 +5,7 @@ export default {
   outputDir: './.rakam/out',
   browser: {
     viewport: { width: 1440, height: 900 },
-    channel: 'chrome',
+    channel: process.env.RAKAM_BROWSER_CHANNEL || null,
     headless: true
   },
   video: {

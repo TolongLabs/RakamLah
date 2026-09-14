@@ -1,0 +1,52 @@
+name: Feature proposal
+description: Propose a portable improvement with a measurable outcome.
+title: '[Feature]: '
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Planned work belongs in issues. Describe the outcome and keep application-specific choreography in adapters.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What becomes possible for a user or agent?
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What current cost, risk, or limitation does this remove?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Capture
+        - Media
+        - Agent interface
+        - Interactive UX
+        - Distribution
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable, testable completion criteria.
+      placeholder: |-
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Explain smaller approaches or existing workarounds.

@@ -1,0 +1,9 @@
+.agents/
+.claude/skills/
+node_modules/
+media/bgm/
+media/voices/
+*.png
+.rakam/
+dist/
+coverage/

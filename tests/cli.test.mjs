@@ -13,7 +13,10 @@ const sink = () => {
 
 const fixture = async () => {
   const root = await mkdtemp(join(tmpdir(), 'rakamlah-cli-'))
-  await writeFile(join(root, 'scenario.mjs'), `export const expectedBeats = ['ready']; export const walk = async () => {}`)
+  await writeFile(
+    join(root, 'scenario.mjs'),
+    `export const expectedBeats = ['ready']; export const walk = async () => {}`
+  )
   await writeFile(join(root, 'narration.txt'), 'ready | 0 | Ready.\n')
   await writeFile(
     join(root, 'rakam.config.mjs'),
@@ -80,7 +83,11 @@ test('main maps a missing dependency to exit code 3', async () => {
     }
   }
 
-  const code = await main(['doctor', '--config', path, '--json'], { stdout: stdout.stream, stderr: stderr.stream }, { handlers })
+  const code = await main(
+    ['doctor', '--config', path, '--json'],
+    { stdout: stdout.stream, stderr: stderr.stream },
+    { handlers }
+  )
   assert.equal(code, 3)
   assert.equal(JSON.parse(stdout.value()).exitCode, 3)
 })

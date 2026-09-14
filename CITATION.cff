@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: 'If RakamLah supports your work, please cite the software using this metadata.'
+title: 'RakamLah'
+type: software
+version: 0.1.0
+date-released: 2026-09-14
+license: MIT
+authors:
+  - name: TolongLabs
+repository-code: 'https://github.com/TolongLabs/RakamLah'
+url: 'https://github.com/TolongLabs/RakamLah'
+abstract: 'A portable, agent-friendly suite for scripted browser capture, beat-aware narration, subtitles, music, and deliverable verification.'
+keywords:
+  - browser-automation
+  - video-recording
+  - playwright
+  - text-to-speech
+  - developer-tools

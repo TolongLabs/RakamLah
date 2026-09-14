@@ -14,16 +14,16 @@ shipped.
 
 ## Layout
 
-| Path                       | Owns                                                      |
-| -------------------------- | --------------------------------------------------------- |
-| `bin/`, `src/`             | Headless CLI, config, command dispatch, structured output |
-| `engine/browser/`          | Playwright capture, beats, and camera motion              |
-| `engine/media/`            | TTS, scheduling, subtitles, ffmpeg assembly               |
-| `examples/basic/`          | Synthetic, locally runnable portability example           |
-| `media/`                   | Git LFS BGM and consent-cleared voice references          |
-| `docs/`                    | Landing page and focused product/technical guidance       |
-| `.agents/`, `.claude/`     | Repository-local agent skills, adapters, and hooks        |
-| `.github/`                 | CI, issue forms, ownership, and review templates          |
+| Path                   | Owns                                                      |
+| ---------------------- | --------------------------------------------------------- |
+| `bin/`, `src/`         | Headless CLI, config, command dispatch, structured output |
+| `engine/browser/`      | Playwright capture, beats, and camera motion              |
+| `engine/media/`        | TTS, scheduling, subtitles, ffmpeg assembly               |
+| `examples/basic/`      | Synthetic, locally runnable portability example           |
+| `media/`               | Git LFS BGM and consent-cleared voice references          |
+| `docs/`                | Landing page and focused product/technical guidance       |
+| `.agents/`, `.claude/` | Repository-local agent skills, adapters, and hooks        |
+| `.github/`             | CI, issue forms, ownership, and review templates          |
 
 Read [`docs/architecture.md`](docs/architecture.md) before changing boundaries,
 [`docs/configuration.md`](docs/configuration.md) before changing config or adapter contracts, and
@@ -51,7 +51,7 @@ caches, worker prompts/logs, or machine-specific paths.
 - Keep modules small, explicit, and independently testable. Avoid framework-specific assumptions in core code.
 - Resolve user paths relative to the config file. Pass subprocess arguments as arrays; never interpolate untrusted
   values into a shell command.
-- In `--json` or `CI` mode, never prompt. Stdout contains one final JSON object; diagnostics go to stderr.
+- Never prompt in CI. With `--json`, stdout contains one final JSON object and diagnostics go to stderr.
 - Preserve exit codes: 0 success, 2 invalid input, 3 missing dependency, 4 capture/render failure, 5 failed verification.
 - Narration audio and burned subtitles come from the same manifest. A line must not cross its next visible beat.
 - Added voice samples require redistribution and cloning consent. Follow [`RESPONSIBLE_USE.md`](RESPONSIBLE_USE.md).

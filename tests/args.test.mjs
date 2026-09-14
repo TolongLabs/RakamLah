@@ -28,9 +28,15 @@ test('recognizes global help without requiring a command', () => {
 })
 
 test('rejects an unknown command as invalid input', () => {
-  assert.throws(() => parseArgs(['film']), (error) => error.exitCode === 2 && /Unknown command/.test(error.message))
+  assert.throws(
+    () => parseArgs(['film']),
+    (error) => error.exitCode === 2 && /Unknown command/.test(error.message)
+  )
 })
 
 test('rejects an option without its value', () => {
-  assert.throws(() => parseArgs(['validate', '--config']), (error) => error.exitCode === 2 && /--config/.test(error.message))
+  assert.throws(
+    () => parseArgs(['validate', '--config']),
+    (error) => error.exitCode === 2 && /--config/.test(error.message)
+  )
 })

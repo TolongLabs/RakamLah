@@ -6,7 +6,9 @@ export const linearPosition = (start, end, progress) => {
 const targetY = async (page, target) => {
   if (Number.isFinite(target)) return target
   if (target && typeof target.evaluate === 'function') {
-    return target.evaluate((element) => window.scrollY + element.getBoundingClientRect().top - window.innerHeight * 0.15)
+    return target.evaluate(
+      (element) => window.scrollY + element.getBoundingClientRect().top - window.innerHeight * 0.15
+    )
   }
   throw new TypeError('scroll target must be a Y coordinate or locator')
 }

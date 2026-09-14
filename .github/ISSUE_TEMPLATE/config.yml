@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/TolongLabs/RakamLah/security/advisories/new
+    about: Report vulnerabilities or sensitive safety concerns privately.
+  - name: Support guide
+    url: https://github.com/TolongLabs/RakamLah/blob/main/SUPPORT.md
+    about: Check diagnostics and reporting guidance before opening an issue.

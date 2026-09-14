@@ -16,12 +16,12 @@ material that is intentionally committed.
 
 ## Hooks
 
-| Hook                | Event            | Purpose                                                |
-| ------------------- | ---------------- | ------------------------------------------------------ |
-| `session-brief.sh`  | Session start    | Shows branch, dirty count, and verification commands   |
-| `env-drift.mjs`     | Session start    | Compares public defaults without revealing local values |
-| `guard-git.sh`      | Before shell use | Blocks direct/forced pushes to `main` and staging `.env` |
-| `format-edited.sh`  | After edits      | Runs Prettier on supported project files               |
+| Hook               | Event            | Purpose                                                  |
+| ------------------ | ---------------- | -------------------------------------------------------- |
+| `session-brief.sh` | Session start    | Shows branch, dirty count, and verification commands     |
+| `env-drift.mjs`    | Session start    | Compares public defaults without revealing local values  |
+| `guard-git.sh`     | Before shell use | Blocks direct/forced pushes to `main` and staging `.env` |
+| `format-edited.sh` | After edits      | Runs Prettier on supported project files                 |
 
 Hook failures remain non-blocking unless they detect an intentionally prohibited Git operation.
 

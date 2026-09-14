@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "terms": "media/LICENSE.md",
+  "files": [
+    {
+      "path": "media/bgm/lofi-bgm-track-list.txt",
+      "kind": "cue-sheet",
+      "bytes": 894,
+      "sha256": "6e411d4675445a4a8fd72bc8f872a5a77acabb01a3d1864df18dea487770a13e"
+    },
+    {
+      "path": "media/bgm/lofi-bgm.mp3",
+      "kind": "bgm",
+      "bytes": 125481734,
+      "sha256": "8a4df2b6a04d2b464e4914b980a12ab768fd7d3da20a6ba2c7e17af60aeebee5",
+      "durationSeconds": 10938.038277,
+      "codec": "mp3",
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "path": "media/voices/columbina-voice-sample.mp3",
+      "kind": "voice-reference",
+      "bytes": 18018259,
+      "sha256": "45c67e4a89783bc46d9a1819deae7a5e80d19193af50e26123e89d6e73b71f6e",
+      "durationSeconds": 1114.557823,
+      "codec": "mp3",
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "path": "media/voices/varesa-voice-sample.mp3",
+      "kind": "voice-reference",
+      "bytes": 24131593,
+      "sha256": "9011aa7c175e61a035dbdbb713f7a1190781d371b52647bb63be90ebbd6dc709",
+      "durationSeconds": 1745.81551,
+      "codec": "mp3",
+      "sampleRate": 44100,
+      "channels": 2
+    }
+  ]
+}
