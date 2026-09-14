@@ -40,6 +40,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install the Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Verify Git LFS objects
         run: |
           test "$(git lfs ls-files -n | wc -l)" -eq 3
@@ -60,10 +63,13 @@ jobs:
         run: node bin/rakam.mjs validate --config examples/basic/rakam.config.mjs --json
 
       - name: Record the neutral browser smoke
-        env:
-          RAKAM_BROWSER_CHANNEL: chrome
         run: |
+          set +e
           capture_json="$(node bin/rakam.mjs capture --config examples/basic/rakam.config.mjs --json)"
+          capture_status="$?"
+          set -e
+          printf '%s\n' "$capture_json"
+          test "$capture_status" -eq 0
           run_dir="$(node -e 'const value=JSON.parse(process.argv[1]); if (!value.ok) process.exit(1); process.stdout.write(value.runDir)' "$capture_json")"
           test -s "$run_dir/capture.webm"
           test -s "$run_dir/beats.json"
