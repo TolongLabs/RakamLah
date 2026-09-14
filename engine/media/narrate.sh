@@ -81,9 +81,18 @@ if awk -v value="$tail_pad" 'BEGIN { exit !(value > 0) }'; then
 fi
 
 subtitle_path="${RAKAM_DIR}/narration.srt"
+# FFmpeg parses option values and then the containing filtergraph. Escape once for each layer; the graph is passed as
+# one argv value, so no additional shell-command escaping is needed.
 subtitle_path="${subtitle_path//\\/\\\\}"
 subtitle_path="${subtitle_path//:/\\:}"
-subtitle_filter="subtitles=filename='${subtitle_path}':force_style='FontName=${FONT},FontSize=${FONT_SIZE},PrimaryColour=&H00FFFFFF,BackColour=&H70000000,OutlineColour=&H70000000,BorderStyle=3,Outline=0.6,Shadow=0,Alignment=2,MarginL=${MARGIN_H},MarginR=${MARGIN_H},MarginV=${MARGIN_V},Spacing=0.2'"
+subtitle_path="${subtitle_path//\'/\\\'}"
+subtitle_path="${subtitle_path//\\/\\\\}"
+subtitle_path="${subtitle_path//\'/\\\'}"
+subtitle_path="${subtitle_path//,/\\,}"
+subtitle_path="${subtitle_path//;/\\;}"
+subtitle_path="${subtitle_path//[/\\[}"
+subtitle_path="${subtitle_path//]/\\]}"
+subtitle_filter="subtitles=filename=${subtitle_path}:force_style='FontName=${FONT},FontSize=${FONT_SIZE},PrimaryColour=&H00FFFFFF,BackColour=&H70000000,OutlineColour=&H70000000,BorderStyle=3,Outline=0.6,Shadow=0,Alignment=2,MarginL=${MARGIN_H},MarginR=${MARGIN_H},MarginV=${MARGIN_V},Spacing=0.2'"
 
 if [ -n "$BGM" ]; then
   fade_in=$(awk -v total="$total_duration" 'BEGIN { printf "%.3f", (total < 6 ? total / 3 : 2) }')

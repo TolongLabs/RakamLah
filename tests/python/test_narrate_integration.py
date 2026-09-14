@@ -15,7 +15,7 @@ MEDIA_DIR = Path(__file__).resolve().parents[2] / 'engine' / 'media'
 @unittest.skipUnless(shutil.which('ffmpeg') and shutil.which('ffprobe'), 'ffmpeg and ffprobe are required')
 class NarrateIntegrationTests(unittest.TestCase):
     def test_one_batch_is_composed_with_subtitles_bgm_and_verified_streams(self):
-        with tempfile.TemporaryDirectory() as temporary:
+        with tempfile.TemporaryDirectory(prefix="rakam-O'Brien [preview],v1;-") as temporary:
             root = Path(temporary)
             source = root / 'capture.mp4'
             bgm = root / 'bgm.wav'
