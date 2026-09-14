@@ -43,6 +43,9 @@ jobs:
       - name: Install the Playwright browser
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get install --no-install-recommends --yes ffmpeg
+
       - name: Verify Git LFS objects
         run: |
           test "$(git lfs ls-files -n | wc -l)" -eq 3
