@@ -5,6 +5,7 @@ set -euo pipefail
 
 MEDIA_DIR="$(cd "$(dirname "$0")" && pwd)"
 PYTHON="${RAKAM_PYTHON:-$(command -v python3 || true)}"
+SPEAK="${RAKAM_SPEAK:-$MEDIA_DIR/speak.py}"
 FFMPEG="${RAKAM_FFMPEG:-$(command -v ffmpeg || true)}"
 FFPROBE="${RAKAM_FFPROBE:-$(command -v ffprobe || true)}"
 SCRIPT="${RAKAM_SCRIPT:?RAKAM_SCRIPT must name a narration file}"
@@ -47,7 +48,7 @@ find "$SEGMENTS" -mindepth 1 -maxdepth 1 -delete
 line_count=$("$PYTHON" -c 'import json,sys; print(len(json.load(open(sys.argv[1], encoding="utf-8"))))' "$RAKAM_DIR/lines.json")
 [ "$line_count" -gt 0 ] || { echo "no narration lines resolved" >&2; exit 1; }
 
-"$PYTHON" "$MEDIA_DIR/speak.py" --batch "$RAKAM_DIR/lines.json" "$SEGMENTS"
+"$PYTHON" "$SPEAK" --batch "$RAKAM_DIR/lines.json" "$SEGMENTS"
 "$PYTHON" "$MEDIA_DIR/schedule.py" "$RAKAM_DIR" "$FFPROBE"
 "$PYTHON" "$MEDIA_DIR/subtitles.py" "$RAKAM_DIR" "$MAX_CHARS" "$MAX_ROWS"
 
@@ -71,7 +72,7 @@ duration() {
 
 video_duration=$(duration "$ASSEMBLED")
 audio_duration=$(duration "$RAKAM_DIR/narration.wav")
-tail_pad=$(awk -v audio="$audio_duration" -v video="$video_duration" 'BEGIN { delta=audio-video; printf "%.3f", delta > 0 ? delta + 0.4 : 0 }')
+tail_pad=$(awk -v audio="$audio_duration" -v video="$video_duration" 'BEGIN { delta=audio-video; printf "%.3f", (delta > 0 ? delta + 0.4 : 0) }')
 total_duration=$(awk -v padding="$tail_pad" -v video="$video_duration" 'BEGIN { printf "%.3f", video + padding }')
 
 tpad=""
@@ -85,8 +86,8 @@ subtitle_path="${subtitle_path//:/\\:}"
 subtitle_filter="subtitles=filename='${subtitle_path}':force_style='FontName=${FONT},FontSize=${FONT_SIZE},PrimaryColour=&H00FFFFFF,BackColour=&H70000000,OutlineColour=&H70000000,BorderStyle=3,Outline=0.6,Shadow=0,Alignment=2,MarginL=${MARGIN_H},MarginR=${MARGIN_H},MarginV=${MARGIN_V},Spacing=0.2'"
 
 if [ -n "$BGM" ]; then
-  fade_in=$(awk -v total="$total_duration" 'BEGIN { printf "%.3f", total < 6 ? total / 3 : 2 }')
-  fade_out=$(awk -v total="$total_duration" 'BEGIN { printf "%.3f", total < 12 ? total / 3 : 4 }')
+  fade_in=$(awk -v total="$total_duration" 'BEGIN { printf "%.3f", (total < 6 ? total / 3 : 2) }')
+  fade_out=$(awk -v total="$total_duration" 'BEGIN { printf "%.3f", (total < 12 ? total / 3 : 4) }')
   fade_start=$(awk -v total="$total_duration" -v fade="$fade_out" 'BEGIN { printf "%.3f", total - fade }')
   "$FFMPEG" -y -loglevel error -i "$ASSEMBLED" -i "$RAKAM_DIR/narration.wav" -stream_loop -1 -i "$BGM" \
     -filter_complex "[0:v]${tpad}${subtitle_filter}[video];[1:a]pan=stereo|c0=c0|c1=c0,asplit=2[voice][side-source];[side-source]apad=whole_dur=${total_duration}[side];[2:a]atrim=start=0:end=${total_duration},asetpts=PTS-STARTPTS,aformat=sample_rates=44100:channel_layouts=stereo,volume=${BGM_GAIN_DB}dB,afade=t=in:st=0:d=${fade_in},afade=t=out:st=${fade_start}:d=${fade_out}[music];[music][side]sidechaincompress=threshold=0.03:ratio=6:attack=30:release=500:knee=2.8[ducked];[voice][ducked]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0,alimiter=limit=0.95:attack=5:release=50:level=false:latency=true[audio]" \
