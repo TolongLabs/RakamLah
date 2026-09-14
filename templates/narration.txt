@@ -1,0 +1,3 @@
+welcome | 0 | Welcome to a repeatable product walkthrough.
+interaction | 0 | The scenario performs the same verified interaction every time.
+outcome | 0 | The recording ends on a visible user outcome.
